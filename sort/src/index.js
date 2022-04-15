@@ -1,8 +1,13 @@
 "use strict";
 exports.__esModule = true;
+var CharacterCollection_1 = require("./CharacterCollection");
 var NumbersCollection_1 = require("./NumbersCollection");
 var Sorter_1 = require("./Sorter");
 var collection = new NumbersCollection_1.NumberCollection([10, 3, -5, 0]);
 var sorter = new Sorter_1.Sorter(collection);
 sorter.sort();
 console.log(collection.data);
+var collectionString = new CharacterCollection_1.CharacterCollection(['b', 'a', 'd', 'f']);
+var sorterString = new Sorter_1.Sorter(collectionString);
+sorterString.sort();
+console.log(collectionString.data);

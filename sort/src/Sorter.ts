@@ -1,9 +1,15 @@
 import { NumberCollection } from "./NumbersCollection";
 
-export class Sorter {
-  collection: NumberCollection;
+interface Sortable {
+  length(): number;
+  swap(leftIndex: number, rightIndex: number): void;
+  compare(leftIndex: number, rightIndex: number): boolean;
+}
 
-  constructor(collection: NumberCollection) {
+export class Sorter {
+  collection: Sortable;
+
+  constructor(collection: Sortable) {
     this.collection = collection;
   }
 
