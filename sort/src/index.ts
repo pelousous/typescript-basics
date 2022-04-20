@@ -1,13 +1,21 @@
 import { CharacterCollection } from "./CharacterCollection";
 import { NumberCollection } from "./NumbersCollection";
-import { Sorter } from "./Sorter";
+import { LinkedList } from "./LinkedList";
+// import { Sorter } from "./Sorter";
 
-const collection = new NumberCollection([10, 3, -5, 0]);
-const sorter = new Sorter(collection);
-sorter.sort();
-console.log(collection.data);
+// const collection = new NumberCollection([10, 3, -5, 0]);
+// collection.sort();
+// console.log(collection.data);
 
-const collectionString = new CharacterCollection('cadf');
-const sorterString = new Sorter(collectionString);
-sorterString.sort();
-console.log(collectionString.data);
+// const collectionString = new CharacterCollection('cadf');
+// collectionString.sort();
+// console.log(collectionString.data);
+
+const linkedList = new LinkedList();
+linkedList.add(500);
+linkedList.add(-10);
+linkedList.add(-3);
+linkedList.add(4);
+
+linkedList.sort();
+linkedList.print();
