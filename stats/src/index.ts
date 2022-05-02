@@ -4,25 +4,12 @@
 //   encoding: 'utf-8'
 // }).split('\n').map(row => row.split(','));
 
-//import { Circle } from "./Circle";
-import { ConsoleReport } from "./reportTargets/ConsoleReport";
-import { CsvFileReader } from "./CsvFileReader";
 import { MatchReader } from "./MatchReader";
-// import { MatchResult } from "./MatchResults";
 import { Summary } from "./Summary";
-import { WinsAnalysis } from "./analyzers/WinsAnalysis";
-//import { Rectangle } from "./Rectangle";
-//import { dateStringToDate } from "./utils";
-//import { Wall } from "./Wall";
 
-//const reader = new MatchReader("football.csv");
-//reader.read();
-
-const reader = new CsvFileReader("football.csv");
-const matchReader = new MatchReader(reader);
+const matchReader = MatchReader.fromCsvFile("football.csv");
+const summary = Summary.winsAnalysisWithHtmlReport("Man United");
 matchReader.load();
-
-const summary = new Summary(new WinsAnalysis("Man United"), new ConsoleReport());
 summary.buildAndPrintReport(matchReader.matches);
 
 // let manWin = 0;
