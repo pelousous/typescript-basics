@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { Eventing } from "./Eventing";
+import { Sync } from "./Sync";
 
 export const url =
   "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu44.gitpod.io/users";
@@ -13,6 +14,7 @@ export interface UserProps {
 export class User {
   private data: UserProps;
   events: Eventing = new Eventing();
+  sync: Sync<UserProps> = new Sync<UserProps>(url);
 
   constructor(data: UserProps) {
     this.data = data;
@@ -26,17 +28,17 @@ export class User {
     Object.assign(this.data, userProps);
   }
 
-  fetch(): void {
-    axios
-      .get(url + "/" + this.get("id"))
-      .then((response: AxiosResponse) => this.set(response.data));
-  }
+  // fetch(): void {
+  //   axios
+  //     .get(url + "/" + this.get("id"))
+  //     .then((response: AxiosResponse) => this.set(response.data));
+  // }
 
-  save(): void {
-    if (this.get("id")) {
-      axios.put(url + "/" + this.get("id"), this.data);
-    } else {
-      axios.post(url, this.data);
-    }
-  }
+  // save(): void {
+  //   if (this.get("id")) {
+  //     axios.put(url + "/" + this.get("id"), this.data);
+  //   } else {
+  //     axios.post(url, this.data);
+  //   }
+  // }
 }

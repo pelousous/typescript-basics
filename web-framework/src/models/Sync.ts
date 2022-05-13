@@ -1,19 +1,25 @@
 import axios, { AxiosPromise } from "axios";
-import { User, UserProps } from "./User";
 
-export const url =
-  "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu44.gitpod.io/users";
+interface HasId {
+  id?: number;
+}
 
-export class Sync {
+export class Sync<T extends HasId> {
+  url: string;
+
+  constructor(url: string) {
+    this.url = url;
+  }
   fetch(id: number): AxiosPromise {
-    return axios.get(url + "/" + id);
+    return axios.get(this.url + "/" + id);
   }
 
-  save(data: UserProps): AxiosPromise {
-    if (data.id) {
-      return axios.put(url + "/" + data.id, data);
+  save(data: T): AxiosPromise {
+    const { id } = data;
+    if (id) {
+      return axios.put(this.url + "/" + id, data);
     } else {
-      return axios.post(url, data);
+      return axios.post(this.url, data);
     }
   }
 }
