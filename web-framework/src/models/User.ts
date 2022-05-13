@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { Attributes } from "./Attributes";
 import { Eventing } from "./Eventing";
 import { Sync } from "./Sync";
 
@@ -15,9 +16,10 @@ export class User {
   private data: UserProps;
   events: Eventing = new Eventing();
   sync: Sync<UserProps> = new Sync<UserProps>(url);
+  attributes: Attributes<UserProps>;
 
-  constructor(data: UserProps) {
-    this.data = data;
+  constructor(attributes: UserProps) {
+    this.attributes = new Attributes<UserProps>(attributes);
   }
 
   get(userProp: string) {
