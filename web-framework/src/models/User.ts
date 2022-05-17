@@ -22,13 +22,41 @@ export class User {
     this.attributes = new Attributes<UserProps>(attributes);
   }
 
-  get(userProp: string) {
-    return this.data[userProp];
+  // to implement the on method on events
+  // to allow delegation we can do something like this:
+  // on(eventName: string, callback: CallBack): void {
+  //   this.events.on(eventName, callback);
+  // }
+  // but like this wevery time we need to update the
+  // original fn with new parameter we nedd to
+  // update every time we used it in the code
+  // to avoid this we can use the accessors
+  // and return the reference to the events fn
+  // and call it like this
+  /*
+    user.on('change', () => {
+      console.log('user was changed');
+    });
+  */
+  get on() {
+    return this.events.on;
   }
 
-  set(userProps: UserProps) {
-    Object.assign(this.data, userProps);
+  get trigger() {
+    return this.events.trigger;
   }
+
+  get get() {
+    return this.attributes.get;
+  }
+
+  // get(userProp: string) {
+  //   return this.data[userProp];
+  // }
+
+  // set(userProps: UserProps) {
+  //   Object.assign(this.data, userProps);
+  // }
 
   // fetch(): void {
   //   axios

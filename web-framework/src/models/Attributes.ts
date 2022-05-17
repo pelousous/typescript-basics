@@ -1,7 +1,7 @@
 import { UserProps } from "./User";
 
 export class Attributes<T> {
-  data: T;
+  private data: T;
 
   constructor(data: T) {
     this.data = data;
