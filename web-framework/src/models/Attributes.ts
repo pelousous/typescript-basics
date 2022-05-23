@@ -18,6 +18,10 @@ export class Attributes<T> {
   //   return this.data[userProp];
   // }
 
+  getAll(): T {
+    return this.data;
+  }
+
   set(userProps: T): void {
     Object.assign(this.data, userProps);
   }

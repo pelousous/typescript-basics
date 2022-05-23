@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosPromise, AxiosResponse } from "axios";
 import { Attributes } from "./Attributes";
 import { Eventing } from "./Eventing";
 import { Sync } from "./Sync";
@@ -56,14 +56,25 @@ export class User {
     this.events.trigger("change");
   }
 
-  fetch() {
+  fetch(): void {
     const id = this.get("id");
 
     if (typeof id === "number") {
-      this.sync.fetch(id).then((response) => {
+      this.sync.fetch(id).then((response: AxiosResponse) => {
         this.set(response.data);
       });
     }
+  }
+
+  save(): void {
+    this.sync
+      .save(this.attributes.getAll())
+      .then((response: AxiosResponse) => {
+        this.events.trigger("save");
+      })
+      .catch((err) => {
+        this.events.trigger("error");
+      });
   }
   // get(userProp: string) {
   //   return this.data[userProp];

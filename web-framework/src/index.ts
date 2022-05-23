@@ -1,9 +1,10 @@
 import { url, User } from "./models/User";
 
-const user = new User({ id: 1 });
+const user = new User({ name: "babbo", age: 50 });
 
-user.on("change", () => {
+user.on("save", () => {
+  console.log("save triggered");
   console.log(user);
 });
 
-user.fetch();
+user.save();
