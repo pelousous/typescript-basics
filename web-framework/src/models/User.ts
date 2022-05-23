@@ -4,7 +4,7 @@ import { Eventing } from "./Eventing";
 import { Sync } from "./Sync";
 
 export const url =
-  "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu44.gitpod.io/users";
+  "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu45.gitpod.io/users";
 
 export interface UserProps {
   id?: number;
@@ -50,6 +50,21 @@ export class User {
     return this.attributes.get;
   }
 
+  set(userProps: UserProps): void {
+    this.attributes.set(userProps);
+
+    this.events.trigger("change");
+  }
+
+  fetch() {
+    const id = this.get("id");
+
+    if (typeof id === "number") {
+      this.sync.fetch(id).then((response) => {
+        this.set(response.data);
+      });
+    }
+  }
   // get(userProp: string) {
   //   return this.data[userProp];
   // }

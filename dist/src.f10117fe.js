@@ -117,7 +117,80 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
+})({"src/models/Attributes.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Attributes = void 0;
+
+var Attributes =
+/** @class */
+function () {
+  function Attributes(data) {
+    var _this = this; // instead of using th return union
+    // that oblige to write type guards when we want to use it
+    // we can create a type from the keys of the interface
+    // and use the return type inside of the object
+    // to determine the type returned T[K]
+
+
+    this.get = function (userProp) {
+      return _this.data[userProp];
+    };
+
+    this.data = data;
+  } // get(userProp: string): string | number {
+  //   return this.data[userProp];
+  // }
+
+
+  Attributes.prototype.set = function (userProps) {
+    Object.assign(this.data, userProps);
+  };
+
+  return Attributes;
+}();
+
+exports.Attributes = Attributes;
+},{}],"src/models/Eventing.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Eventing = void 0;
+
+var Eventing =
+/** @class */
+function () {
+  function Eventing() {
+    var _this = this;
+
+    this.events = {};
+
+    this.on = function (eventName, callback) {
+      //const handlers =
+      var handlers = _this.events[eventName] || [];
+      handlers.push(callback);
+      _this.events[eventName] = handlers;
+    };
+
+    this.trigger = function (eventName) {
+      var handlers = _this.events[eventName];
+      if (!handlers || handlers.length === 0) return;
+      handlers.forEach(function (cb) {
+        return cb();
+      });
+    };
+  }
+
+  return Eventing;
+}();
+
+exports.Eventing = Eventing;
+},{}],"../node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
 'use strict';
 
 module.exports = function bind(fn, thisArg) {
@@ -4543,41 +4616,7 @@ module.exports.default = axios;
 
 },{"./utils":"../node_modules/axios/lib/utils.js","./helpers/bind":"../node_modules/axios/lib/helpers/bind.js","./core/Axios":"../node_modules/axios/lib/core/Axios.js","./core/mergeConfig":"../node_modules/axios/lib/core/mergeConfig.js","./defaults":"../node_modules/axios/lib/defaults/index.js","./cancel/CanceledError":"../node_modules/axios/lib/cancel/CanceledError.js","./cancel/CancelToken":"../node_modules/axios/lib/cancel/CancelToken.js","./cancel/isCancel":"../node_modules/axios/lib/cancel/isCancel.js","./env/data":"../node_modules/axios/lib/env/data.js","./helpers/toFormData":"../node_modules/axios/lib/helpers/toFormData.js","../lib/core/AxiosError":"../node_modules/axios/lib/core/AxiosError.js","./helpers/spread":"../node_modules/axios/lib/helpers/spread.js","./helpers/isAxiosError":"../node_modules/axios/lib/helpers/isAxiosError.js"}],"../node_modules/axios/index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"../node_modules/axios/lib/axios.js"}],"src/models/Eventing.ts":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Eventing = void 0;
-
-var Eventing =
-/** @class */
-function () {
-  function Eventing() {
-    this.events = {};
-  }
-
-  Eventing.prototype.on = function (eventName, callback) {
-    //const handlers =
-    var handlers = this.events[eventName] || [];
-    handlers.push(callback);
-    this.events[eventName] = handlers;
-  };
-
-  Eventing.prototype.trigger = function (eventName) {
-    var handlers = this.events[eventName];
-    if (!handlers || handlers.length === 0) return;
-    handlers.forEach(function (cb) {
-      return cb();
-    });
-  };
-
-  return Eventing;
-}();
-
-exports.Eventing = Eventing;
-},{}],"src/models/User.ts":[function(require,module,exports) {
+},{"./lib/axios":"../node_modules/axios/lib/axios.js"}],"src/models/Sync.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -4589,43 +4628,113 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.User = exports.url = void 0;
+exports.Sync = void 0;
 
 var axios_1 = __importDefault(require("axios"));
 
+var Sync =
+/** @class */
+function () {
+  function Sync(url) {
+    this.url = url;
+  }
+
+  Sync.prototype.fetch = function (id) {
+    return axios_1.default.get(this.url + "/" + id);
+  };
+
+  Sync.prototype.save = function (data) {
+    var id = data.id;
+
+    if (id) {
+      return axios_1.default.put(this.url + "/" + id, data);
+    } else {
+      return axios_1.default.post(this.url, data);
+    }
+  };
+
+  return Sync;
+}();
+
+exports.Sync = Sync;
+},{"axios":"../node_modules/axios/index.js"}],"src/models/User.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.User = exports.url = void 0;
+
+var Attributes_1 = require("./Attributes");
+
 var Eventing_1 = require("./Eventing");
 
-exports.url = "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu44.gitpod.io/users";
+var Sync_1 = require("./Sync");
+
+exports.url = "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu45.gitpod.io/users";
 
 var User =
 /** @class */
 function () {
-  function User(data) {
+  function User(attributes) {
     this.events = new Eventing_1.Eventing();
-    this.data = data;
+    this.sync = new Sync_1.Sync(exports.url);
+    this.attributes = new Attributes_1.Attributes(attributes);
   }
 
-  User.prototype.get = function (userProp) {
-    return this.data[userProp];
-  };
+  Object.defineProperty(User.prototype, "on", {
+    // to implement the on method on events
+    // to allow delegation we can do something like this:
+    // on(eventName: string, callback: CallBack): void {
+    //   this.events.on(eventName, callback);
+    // }
+    // but like this wevery time we need to update the
+    // original fn with new parameter we nedd to
+    // update every time we used it in the code
+    // to avoid this we can use the accessors
+    // and return the reference to the events fn
+    // and call it like this
+
+    /*
+      user.on('change', () => {
+        console.log('user was changed');
+      });
+    */
+    get: function get() {
+      return this.events.on;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(User.prototype, "trigger", {
+    get: function get() {
+      return this.events.trigger;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(User.prototype, "get", {
+    get: function get() {
+      return this.attributes.get;
+    },
+    enumerable: false,
+    configurable: true
+  });
 
   User.prototype.set = function (userProps) {
-    Object.assign(this.data, userProps);
+    this.attributes.set(userProps);
+    this.events.trigger("change");
   };
 
   User.prototype.fetch = function () {
     var _this = this;
 
-    axios_1.default.get(exports.url + "/" + this.get("id")).then(function (response) {
-      return _this.set(response.data);
-    });
-  };
+    var id = this.get("id");
 
-  User.prototype.save = function () {
-    if (this.get("id")) {
-      axios_1.default.put(exports.url + "/" + this.get("id"), this.data);
-    } else {
-      axios_1.default.post(exports.url, this.data);
+    if (typeof id === "number") {
+      this.sync.fetch(id).then(function (response) {
+        _this.set(response.data);
+      });
     }
   };
 
@@ -4633,7 +4742,7 @@ function () {
 }();
 
 exports.User = User;
-},{"axios":"../node_modules/axios/index.js","./Eventing":"src/models/Eventing.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"./Attributes":"src/models/Attributes.ts","./Eventing":"src/models/Eventing.ts","./Sync":"src/models/Sync.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4643,17 +4752,12 @@ Object.defineProperty(exports, "__esModule", {
 var User_1 = require("./models/User");
 
 var user = new User_1.User({
-  name: "lara",
-  age: 30
+  id: 1
 });
-user.save();
-user.events.on("change", function () {
-  console.log("change!!!");
+user.on("change", function () {
+  console.log(user);
 });
-user.events.trigger("change"); //user.fetch();
-// setTimeout(() => {
-//   console.log(user);
-// });
+user.fetch();
 },{"./models/User":"src/models/User.ts"}],"../../../home/gitpod/.nvm/versions/node/v16.13.2/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -4682,7 +4786,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45311" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43309" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

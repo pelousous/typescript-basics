@@ -11,7 +11,7 @@ export class Attributes<T> {
   // we can create a type from the keys of the interface
   // and use the return type inside of the object
   // to determine the type returned T[K]
-  get<K extends keyof T>(userProp: K): T[K] {
+  get = <K extends keyof T> (userProp: K): T[K] => {
     return this.data[userProp];
   }
   // get(userProp: string): string | number {
