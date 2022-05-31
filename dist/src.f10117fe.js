@@ -194,6 +194,77 @@ function () {
 }();
 
 exports.Eventing = Eventing;
+},{}],"src/models/Model.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Model = exports.url = void 0;
+exports.url = "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu46.gitpod.io/users/";
+
+var Model =
+/** @class */
+function () {
+  function Model(attributes, sync, events) {
+    this.attributes = attributes;
+    this.sync = sync;
+    this.events = events;
+  }
+
+  Object.defineProperty(Model.prototype, "on", {
+    get: function get() {
+      return this.events.on;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(Model.prototype, "trigger", {
+    get: function get() {
+      return this.events.trigger;
+    },
+    enumerable: false,
+    configurable: true
+  });
+  Object.defineProperty(Model.prototype, "get", {
+    get: function get() {
+      return this.attributes.get;
+    },
+    enumerable: false,
+    configurable: true
+  });
+
+  Model.prototype.set = function (update) {
+    this.attributes.set(update);
+    this.events.trigger("change");
+  };
+
+  Model.prototype.fetch = function () {
+    var _this = this;
+
+    var id = this.get("id");
+
+    if (typeof id === "number") {
+      this.sync.fetch(id).then(function (response) {
+        _this.set(response.data);
+      });
+    }
+  };
+
+  Model.prototype.save = function () {
+    var _this = this;
+
+    this.sync.save(this.attributes.getAll()).then(function (response) {
+      _this.events.trigger("save");
+    }).catch(function (err) {
+      _this.events.trigger("error");
+    });
+  };
+
+  return Model;
+}();
+
+exports.Model = Model;
 },{}],"../node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
 'use strict';
 
@@ -4620,7 +4691,7 @@ module.exports.default = axios;
 
 },{"./utils":"../node_modules/axios/lib/utils.js","./helpers/bind":"../node_modules/axios/lib/helpers/bind.js","./core/Axios":"../node_modules/axios/lib/core/Axios.js","./core/mergeConfig":"../node_modules/axios/lib/core/mergeConfig.js","./defaults":"../node_modules/axios/lib/defaults/index.js","./cancel/CanceledError":"../node_modules/axios/lib/cancel/CanceledError.js","./cancel/CancelToken":"../node_modules/axios/lib/cancel/CancelToken.js","./cancel/isCancel":"../node_modules/axios/lib/cancel/isCancel.js","./env/data":"../node_modules/axios/lib/env/data.js","./helpers/toFormData":"../node_modules/axios/lib/helpers/toFormData.js","../lib/core/AxiosError":"../node_modules/axios/lib/core/AxiosError.js","./helpers/spread":"../node_modules/axios/lib/helpers/spread.js","./helpers/isAxiosError":"../node_modules/axios/lib/helpers/isAxiosError.js"}],"../node_modules/axios/index.js":[function(require,module,exports) {
 module.exports = require('./lib/axios');
-},{"./lib/axios":"../node_modules/axios/lib/axios.js"}],"src/models/Sync.ts":[function(require,module,exports) {
+},{"./lib/axios":"../node_modules/axios/lib/axios.js"}],"src/models/ApiSync.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -4632,22 +4703,22 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Sync = void 0;
+exports.ApiSync = void 0;
 
 var axios_1 = __importDefault(require("axios"));
 
-var Sync =
+var ApiSync =
 /** @class */
 function () {
-  function Sync(url) {
+  function ApiSync(url) {
     this.url = url;
   }
 
-  Sync.prototype.fetch = function (id) {
+  ApiSync.prototype.fetch = function (id) {
     return axios_1.default.get(this.url + "/" + id);
   };
 
-  Sync.prototype.save = function (data) {
+  ApiSync.prototype.save = function (data) {
     var id = data.id;
 
     if (id) {
@@ -4657,12 +4728,40 @@ function () {
     }
   };
 
-  return Sync;
+  return ApiSync;
 }();
 
-exports.Sync = Sync;
+exports.ApiSync = ApiSync;
 },{"axios":"../node_modules/axios/index.js"}],"src/models/User.ts":[function(require,module,exports) {
 "use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -4673,90 +4772,30 @@ var Attributes_1 = require("./Attributes");
 
 var Eventing_1 = require("./Eventing");
 
-var Sync_1 = require("./Sync");
+var Model_1 = require("./Model");
 
-exports.url = "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu45.gitpod.io/users";
+var ApiSync_1 = require("./ApiSync");
+
+exports.url = "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu46.gitpod.io/users";
 
 var User =
 /** @class */
-function () {
-  function User(attributes) {
-    this.events = new Eventing_1.Eventing();
-    this.sync = new Sync_1.Sync(exports.url);
-    this.attributes = new Attributes_1.Attributes(attributes);
+function (_super) {
+  __extends(User, _super);
+
+  function User() {
+    return _super !== null && _super.apply(this, arguments) || this;
   }
 
-  Object.defineProperty(User.prototype, "on", {
-    // to implement the on method on events
-    // to allow delegation we can do something like this:
-    // on(eventName: string, callback: CallBack): void {
-    //   this.events.on(eventName, callback);
-    // }
-    // but like this wevery time we need to update the
-    // original fn with new parameter we nedd to
-    // update every time we used it in the code
-    // to avoid this we can use the accessors
-    // and return the reference to the events fn
-    // and call it like this
-
-    /*
-      user.on('change', () => {
-        console.log('user was changed');
-      });
-    */
-    get: function get() {
-      return this.events.on;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(User.prototype, "trigger", {
-    get: function get() {
-      return this.events.trigger;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(User.prototype, "get", {
-    get: function get() {
-      return this.attributes.get;
-    },
-    enumerable: false,
-    configurable: true
-  });
-
-  User.prototype.set = function (userProps) {
-    this.attributes.set(userProps);
-    this.events.trigger("change");
-  };
-
-  User.prototype.fetch = function () {
-    var _this = this;
-
-    var id = this.get("id");
-
-    if (typeof id === "number") {
-      this.sync.fetch(id).then(function (response) {
-        _this.set(response.data);
-      });
-    }
-  };
-
-  User.prototype.save = function () {
-    var _this = this;
-
-    this.sync.save(this.attributes.getAll()).then(function (response) {
-      _this.events.trigger("save");
-    }).catch(function (err) {
-      _this.events.trigger("error");
-    });
+  User.buildUser = function (attrs) {
+    return new User(new Attributes_1.Attributes(attrs), new ApiSync_1.ApiSync(exports.url), new Eventing_1.Eventing());
   };
 
   return User;
-}();
+}(Model_1.Model);
 
 exports.User = User;
-},{"./Attributes":"src/models/Attributes.ts","./Eventing":"src/models/Eventing.ts","./Sync":"src/models/Sync.ts"}],"src/index.ts":[function(require,module,exports) {
+},{"./Attributes":"src/models/Attributes.ts","./Eventing":"src/models/Eventing.ts","./Model":"src/models/Model.ts","./ApiSync":"src/models/ApiSync.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4765,15 +4804,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var User_1 = require("./models/User");
 
-var user = new User_1.User({
+var user = User_1.User.buildUser({
+  id: 4,
   name: "babbo",
   age: 50
 });
-user.on("save", function () {
+user.on("change", function () {
   console.log("save triggered");
   console.log(user);
-});
-user.save();
+}); // user.fetch();
 },{"./models/User":"src/models/User.ts"}],"../../../home/gitpod/.nvm/versions/node/v16.13.2/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -4802,7 +4841,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40941" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44667" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

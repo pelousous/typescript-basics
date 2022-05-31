@@ -1,10 +1,10 @@
-import axios, { AxiosPromise, AxiosResponse } from "axios";
 import { Attributes } from "./Attributes";
 import { Eventing } from "./Eventing";
-import { Sync } from "./Sync";
+import { Model } from "./Model";
+import { ApiSync } from "./ApiSync";
 
 export const url =
-  "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu45.gitpod.io/users";
+  "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu46.gitpod.io/users";
 
 export interface UserProps {
   id?: number;
@@ -12,15 +12,22 @@ export interface UserProps {
   age?: number;
 }
 
-export class User {
-  private data: UserProps;
-  events: Eventing = new Eventing();
-  sync: Sync<UserProps> = new Sync<UserProps>(url);
-  attributes: Attributes<UserProps>;
-
-  constructor(attributes: UserProps) {
-    this.attributes = new Attributes<UserProps>(attributes);
+export class User extends Model<UserProps> {
+  static buildUser(attrs: UserProps): User {
+    return new User(
+      new Attributes<UserProps>(attrs),
+      new ApiSync<UserProps>(url),
+      new Eventing()
+    );
   }
+  // private data: UserProps;
+  // events: Eventing = new Eventing();
+  // sync: Sync<UserProps> = new Sync<UserProps>(url);
+  // attributes: Attributes<UserProps>;
+
+  // constructor(attributes: UserProps) {
+  //   this.attributes = new Attributes<UserProps>(attributes);
+  // }
 
   // to implement the on method on events
   // to allow delegation we can do something like this:
@@ -38,44 +45,44 @@ export class User {
       console.log('user was changed');
     });
   */
-  get on() {
-    return this.events.on;
-  }
+  // get on() {
+  //   return this.events.on;
+  // }
 
-  get trigger() {
-    return this.events.trigger;
-  }
+  // get trigger() {
+  //   return this.events.trigger;
+  // }
 
-  get get() {
-    return this.attributes.get;
-  }
+  // get get() {
+  //   return this.attributes.get;
+  // }
 
-  set(userProps: UserProps): void {
-    this.attributes.set(userProps);
+  // set(userProps: UserProps): void {
+  //   this.attributes.set(userProps);
 
-    this.events.trigger("change");
-  }
+  //   this.events.trigger("change");
+  // }
 
-  fetch(): void {
-    const id = this.get("id");
+  // fetch(): void {
+  //   const id = this.get("id");
 
-    if (typeof id === "number") {
-      this.sync.fetch(id).then((response: AxiosResponse) => {
-        this.set(response.data);
-      });
-    }
-  }
+  //   if (typeof id === "number") {
+  //     this.sync.fetch(id).then((response: AxiosResponse) => {
+  //       this.set(response.data);
+  //     });
+  //   }
+  // }
 
-  save(): void {
-    this.sync
-      .save(this.attributes.getAll())
-      .then((response: AxiosResponse) => {
-        this.events.trigger("save");
-      })
-      .catch((err) => {
-        this.events.trigger("error");
-      });
-  }
+  // save(): void {
+  //   this.sync
+  //     .save(this.attributes.getAll())
+  //     .then((response: AxiosResponse) => {
+  //       this.events.trigger("save");
+  //     })
+  //     .catch((err) => {
+  //       this.events.trigger("error");
+  //     });
+  // }
   // get(userProp: string) {
   //   return this.data[userProp];
   // }
