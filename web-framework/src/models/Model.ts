@@ -29,17 +29,29 @@ export class Model<T extends HasId> {
     private events: Events
   ) {}
 
-  get on() {
-    return this.events.on;
-  }
+  // we can do this passthrough methods only
+  // if we declare in the contructor like we do in this class
+  // and not with the old methods
+  // the order of operations is different
+  // with the old synthax this assignment
+  // is executed after the initialization in the constructor -> NOT GOOD
+  on = this.events.on;
 
-  get trigger() {
-    return this.events.trigger;
-  }
+  trigger = this.events.trigger;
 
-  get get() {
-    return this.attributes.get;
-  }
+  get = this.attributes.get;
+
+  // get on() {
+  //   return this.events.on;
+  // }
+
+  // get trigger() {
+  //   return this.events.trigger;
+  // }
+
+  // get get() {
+  //   return this.attributes.get;
+  // }
 
   set(update: T): void {
     this.attributes.set(update);

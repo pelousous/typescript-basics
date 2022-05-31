@@ -4805,14 +4805,14 @@ Object.defineProperty(exports, "__esModule", {
 var User_1 = require("./models/User");
 
 var user = User_1.User.buildUser({
-  id: 4,
+  id: 1,
   name: "babbo",
   age: 50
 });
 user.on("change", function () {
   console.log("save triggered");
   console.log(user);
-}); // user.fetch();
+}); //user.fetch();
 },{"./models/User":"src/models/User.ts"}],"../../../home/gitpod/.nvm/versions/node/v16.13.2/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
