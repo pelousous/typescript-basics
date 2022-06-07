@@ -1,10 +1,11 @@
-import { url, User } from "./models/User";
+import { Collection } from "./models/Collection";
 
-const user = User.buildUser({ id: 1, name: "babbo", age: 50 });
+const collection = new Collection(
+  "https://3000-pelousous-typescriptbasi-x7mye4qqefg.ws-eu47.gitpod.io/users"
+);
 
-user.on("change", () => {
-  console.log("save triggered");
-  console.log(user);
+collection.on("change", function () {
+  console.log(collection.models);
 });
 
-//user.fetch();
+collection.fetch();
